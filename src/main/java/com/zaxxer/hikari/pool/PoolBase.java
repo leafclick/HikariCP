@@ -20,7 +20,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 import com.zaxxer.hikari.util.DriverDataSource;
-import com.zaxxer.hikari.util.PropertyElf;
 import com.zaxxer.hikari.util.UtilityElf;
 import com.zaxxer.hikari.util.UtilityElf.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -314,7 +313,8 @@ abstract class PoolBase
       DataSource ds = config.getDataSource();
       if (dsClassName != null && ds == null) {
          ds = createInstance(dsClassName, DataSource.class);
-         PropertyElf.setTargetFromProperties(ds, dataSourceProperties);
+//         PropertyElf.setTargetFromProperties(ds, dataSourceProperties);
+         throw new RuntimeException("dataSourceClassName not supported in native-image.");
       }
       else if (jdbcUrl != null && ds == null) {
          ds = new DriverDataSource(jdbcUrl, driverClassName, dataSourceProperties, username, password);

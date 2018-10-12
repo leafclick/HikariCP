@@ -28,6 +28,9 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.zaxxer.hikari.pool.HikariPool.POOL_NORMAL;
@@ -45,6 +48,10 @@ public class HikariDataSource extends HikariConfig implements DataSource, Closea
 
    private final HikariPool fastPathPool;
    private volatile HikariPool pool;
+
+   public static Set<String> hikariDsPropSet = new HashSet<>(Arrays.asList(
+      "logWriter", "loginTimeout"
+   ));
 
    /**
     * Default constructor.  Setters are used to configure the pool.  Using
