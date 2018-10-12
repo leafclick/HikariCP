@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.codahale.metrics.Histogram;
@@ -61,7 +62,7 @@ public class TestMetrics
       config.setMaximumPoolSize(1);
       config.setMetricRegistry(metricRegistry);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          ds.getConnection().close();
@@ -91,7 +92,7 @@ public class TestMetrics
       config.setMaximumPoolSize(1);
       config.setMetricRegistry(metricRegistry);
       config.setInitializationFailTimeout(0);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          try (Connection connection = ds.getConnection()) {
@@ -123,7 +124,7 @@ public class TestMetrics
       config.setMaximumPoolSize(10);
       config.setMetricRegistry(metricRegistry);
       config.setHealthCheckRegistry(healthRegistry);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
       config.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
       config.addHealthCheckProperty("expected99thPercentileMs", "100");
 
@@ -153,7 +154,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          MetricRegistry metricRegistry = new MetricRegistry();
          HealthCheckRegistry healthRegistry = new HealthCheckRegistry();
@@ -189,7 +190,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          MetricRegistry metricRegistry = new MetricRegistry();
          HealthCheckRegistry healthRegistry = new HealthCheckRegistry();
@@ -218,7 +219,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          MetricRegistry metricRegistry = new MetricRegistry();
          MetricsTrackerFactory metricsTrackerFactory = new CodahaleMetricsTrackerFactory(metricRegistry);
@@ -251,7 +252,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          MetricRegistry metricRegistry = new MetricRegistry();
 
@@ -277,7 +278,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          MetricRegistry metricRegistry = new MetricRegistry();
          MetricsTrackerFactory metricsTrackerFactory = new CodahaleMetricsTrackerFactory(metricRegistry);
@@ -304,7 +305,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          FakeMetricRegistry metricRegistry = new FakeMetricRegistry();
 
@@ -319,7 +320,7 @@ public class TestMetrics
    {
       try (HikariDataSource ds = newHikariDataSource()) {
          ds.setMaximumPoolSize(1);
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          ds.setMetricRegistry(new MetricRegistry() {
             @Override

@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.apache.logging.log4j.Level;
 import org.junit.Test;
 
@@ -56,7 +57,7 @@ public class MiscTest
       HikariConfig config = newHikariConfig();
       config.setMinimumIdle(0);
       config.setMaximumPoolSize(4);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
       setConfigUnitTest(true);
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
@@ -109,7 +110,7 @@ public class MiscTest
          config.setThreadFactory(Executors.defaultThreadFactory());
          config.setMetricRegistry(null);
          config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(1));
-         config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         config.setDataSource(new StubDataSource());
 
          try (HikariDataSource ds = new HikariDataSource(config)) {
             setSlf4jLogLevel(HikariPool.class, Level.DEBUG);

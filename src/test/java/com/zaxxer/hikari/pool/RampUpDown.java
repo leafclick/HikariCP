@@ -24,6 +24,7 @@ import static org.junit.Assert.assertSame;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class RampUpDown
         config.setMaximumPoolSize(60);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
-        config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+        config.setDataSource(new StubDataSource());
 
         System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "250");
 
@@ -70,6 +71,7 @@ public class RampUpDown
            quietlySleep(500);
 
            assertSame("Total connections not as expected", 5, pool.getTotalConnections());
+           System.out.println("ASSERT done");
         }
     }
 }

@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -157,7 +158,7 @@ public class TestValidation
       setSlf4jTargetStream(HikariConfig.class, ps);
 
       HikariConfig config = newHikariConfig();
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
       config.setMinimumIdle(5);
       config.setIdleTimeout(TimeUnit.SECONDS.toMillis(5));
       config.validate();
@@ -172,7 +173,7 @@ public class TestValidation
       setSlf4jTargetStream(HikariConfig.class, ps);
 
       HikariConfig config = newHikariConfig();
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
       config.setMinimumIdle(5);
       config.setMaxLifetime(TimeUnit.MINUTES.toMillis(2));
       config.setIdleTimeout(TimeUnit.MINUTES.toMillis(3));

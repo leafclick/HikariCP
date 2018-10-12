@@ -103,7 +103,7 @@ public class ConnectionPoolSizeVsThreadsTest {
       config.setMaximumPoolSize(maxPoolSize);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
       config.setConnectionTimeout(2500);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       final AtomicReference<Exception> ref = new AtomicReference<>(null);
 

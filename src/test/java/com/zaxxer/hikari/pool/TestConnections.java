@@ -69,7 +69,7 @@ public class TestConnections
       config.setReadOnly(true);
       config.setConnectionTimeout(2500);
       config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          ds.setLoginTimeout(10);
@@ -112,7 +112,7 @@ public class TestConnections
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
       config.setInitializationFailTimeout(Long.MAX_VALUE);
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "100");
 
@@ -169,7 +169,7 @@ public class TestConnections
       config.setMaximumPoolSize(1);
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "100");
 
@@ -223,7 +223,7 @@ public class TestConnections
       config.setMaximumPoolSize(1);
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config);
          Connection connection = ds.getConnection()) {
@@ -246,7 +246,7 @@ public class TestConnections
       config.setMaximumPoolSize(5);
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          Connection connection = ds.getConnection();
@@ -265,7 +265,7 @@ public class TestConnections
       config.setMaximumPoolSize(10);
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "100");
 
@@ -309,7 +309,7 @@ public class TestConnections
       config.setConnectionTimeout(1000);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       StubConnection.slowCreate = true;
       try (HikariDataSource ds = new HikariDataSource(config)) {
@@ -369,7 +369,7 @@ public class TestConnections
       config.setConnectionTimeout(20000);
       config.setInitializationFailTimeout(0);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       final AtomicReference<Exception> ref = new AtomicReference<>();
 
@@ -418,7 +418,7 @@ public class TestConnections
       config.setMaximumPoolSize(1);
       config.setConnectionTimeout(2500);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       StubConnection.oldDriver = true;
       StubStatement.oldDriver = true;
@@ -449,7 +449,7 @@ public class TestConnections
       config.setConnectionTimeout(2500);
       config.setAllowPoolSuspension(true);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (final HikariDataSource ds = new HikariDataSource(config)) {
          HikariPool pool = getPool(ds);
@@ -492,7 +492,7 @@ public class TestConnections
       config.setConnectionTimeout(2500);
       config.setAllowPoolSuspension(true);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.throwIfSuspended", "true");
       try (final HikariDataSource ds = new HikariDataSource(config)) {
@@ -678,7 +678,7 @@ public class TestConnections
       HikariConfig config = newHikariConfig();
       config.setMaximumPoolSize(20);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "1000");
 
@@ -724,7 +724,7 @@ public class TestConnections
       config.setMaximumPoolSize(5);
       config.setConnectionTimeout(1000L);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config);
            Connection ignored = ds.getConnection()) {

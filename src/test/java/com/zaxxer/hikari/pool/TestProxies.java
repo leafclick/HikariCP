@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -44,7 +45,7 @@ public class TestProxies
       config.setMinimumIdle(0);
       config.setMaximumPoolSize(1);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          Connection conn = ds.getConnection();
@@ -82,7 +83,7 @@ public class TestProxies
       config.setMinimumIdle(0);
       config.setMaximumPoolSize(1);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          Connection conn = ds.getConnection();
@@ -113,7 +114,7 @@ public class TestProxies
       config.setMaximumPoolSize(1);
       config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(1));
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          Connection conn = ds.getConnection();
@@ -225,7 +226,7 @@ public class TestProxies
       config.setMinimumIdle(0);
       config.setMaximumPoolSize(1);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          try (Connection conn = ds.getConnection()) {

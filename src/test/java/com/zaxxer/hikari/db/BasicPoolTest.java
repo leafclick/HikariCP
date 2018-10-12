@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.h2.jdbcx.JdbcDataSource;
+
 import static com.zaxxer.hikari.pool.TestElf.getPool;
 import static com.zaxxer.hikari.pool.TestElf.newHikariConfig;
 import static com.zaxxer.hikari.pool.TestElf.getUnsealedConfig;
@@ -48,8 +50,10 @@ public class BasicPoolTest
        config.setMinimumIdle(1);
        config.setMaximumPoolSize(2);
        config.setConnectionTestQuery("SELECT 1");
-       config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-       config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+
+       JdbcDataSource testDs = new JdbcDataSource();
+       testDs.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+       config.setDataSource(testDs);
 
        try (HikariDataSource ds = new HikariDataSource(config);
             Connection conn = ds.getConnection();
@@ -71,8 +75,10 @@ public class BasicPoolTest
       config.setMinimumIdle(5);
       config.setMaximumPoolSize(10);
       config.setConnectionTestQuery("SELECT 1");
-      config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+
+      JdbcDataSource testDs = new JdbcDataSource();
+      testDs.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+      config.setDataSource(testDs);
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "1000");
 
@@ -112,8 +118,10 @@ public class BasicPoolTest
       HikariConfig config = newHikariConfig();
       config.setMaximumPoolSize(50);
       config.setConnectionTestQuery("SELECT 1");
-      config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+
+      JdbcDataSource testDs = new JdbcDataSource();
+      testDs.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+      config.setDataSource(testDs);
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "1000");
 

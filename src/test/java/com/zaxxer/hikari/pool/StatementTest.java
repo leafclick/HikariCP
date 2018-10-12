@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class StatementTest
       config.setMinimumIdle(1);
       config.setMaximumPoolSize(2);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       ds = new HikariDataSource(config);
    }

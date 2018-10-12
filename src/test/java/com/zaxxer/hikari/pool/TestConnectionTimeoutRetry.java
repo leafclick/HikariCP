@@ -58,7 +58,7 @@ public class TestConnectionTimeoutRetry
       config.setConnectionTimeout(2800);
       config.setValidationTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          StubDataSource stubDataSource = ds.unwrap(StubDataSource.class);
@@ -87,7 +87,7 @@ public class TestConnectionTimeoutRetry
       config.setValidationTimeout(2800);
       config.setInitializationFailTimeout(0);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          final StubDataSource stubDataSource = ds.unwrap(StubDataSource.class);
@@ -130,7 +130,7 @@ public class TestConnectionTimeoutRetry
       config.setConnectionTimeout(2800);
       config.setValidationTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          final Connection connection1 = ds.getConnection();
@@ -179,7 +179,7 @@ public class TestConnectionTimeoutRetry
       config.setConnectionTimeout(1000);
       config.setValidationTimeout(1000);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          final Connection connection1 = ds.getConnection();
@@ -231,7 +231,7 @@ public class TestConnectionTimeoutRetry
       config.setConnectionTimeout(2000);
       config.setValidationTimeout(2000);
       config.setConnectionTestQuery("VALUES 2");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "400");
 

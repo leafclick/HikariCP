@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -44,11 +45,13 @@ public class ConnectionStateTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
-         ds.addDataSourceProperty("user", "bar");
-         ds.addDataSourceProperty("password", "secret");
-         ds.addDataSourceProperty("url", "baf");
-         ds.addDataSourceProperty("loginTimeout", "10");
+
+         StubDataSource testDs = new StubDataSource();
+         testDs.setUser("bar");
+         testDs.setPassword("secret");
+         testDs.setURL("baf");
+         testDs.setLoginTimeout(10);
+         ds.setDataSource(testDs);
 
          try (Connection connection = ds.getConnection()) {
             Connection unwrap = connection.unwrap(Connection.class);
@@ -68,7 +71,7 @@ public class ConnectionStateTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          try (Connection connection = ds.getConnection()) {
             Connection unwrap = connection.unwrap(Connection.class);
@@ -84,7 +87,7 @@ public class ConnectionStateTest
    public void testIsolation() throws Exception
    {
       HikariConfig config = newHikariConfig();
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
       config.setTransactionIsolation("TRANSACTION_REPEATABLE_READ");
       config.validate();
 
@@ -100,7 +103,7 @@ public class ConnectionStateTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          try (Connection connection = ds.getConnection()) {
             Connection unwrap = connection.unwrap(Connection.class);
@@ -120,7 +123,7 @@ public class ConnectionStateTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          try (Connection connection = ds.getConnection()) {
             Connection unwrap = connection.unwrap(Connection.class);
@@ -140,7 +143,7 @@ public class ConnectionStateTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+         ds.setDataSource(new StubDataSource());
 
          try (Connection connection = ds.getConnection()) {
             Statement statement = connection.createStatement();

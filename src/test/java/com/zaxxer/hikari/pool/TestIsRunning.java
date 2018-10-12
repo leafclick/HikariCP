@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
-
+import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -75,7 +75,7 @@ public class TestIsRunning
         config.setReadOnly(true);
         config.setConnectionTimeout(2500);
         config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));
-        config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+        config.setDataSource(new StubDataSource());
         config.setAllowPoolSuspension(true);
 
         return config;

@@ -47,7 +47,7 @@ public class TestMBean
       config.setRegisterMbeans(true);
       config.setConnectionTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       new HikariDataSource(config).close();
    }
@@ -60,7 +60,7 @@ public class TestMBean
       config.setRegisterMbeans(true);
       config.setConnectionTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "100");
 
@@ -106,7 +106,7 @@ public class TestMBean
       config.setRegisterMbeans(true);
       config.setConnectionTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
          HikariConfigMXBean hikariConfigMXBean = ds.getHikariConfigMXBean();
@@ -124,7 +124,7 @@ public class TestMBean
       config.setRegisterMbeans(true);
       config.setConnectionTimeout(2800);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
+      config.setDataSource(new StubDataSource());
 
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "250");
 
