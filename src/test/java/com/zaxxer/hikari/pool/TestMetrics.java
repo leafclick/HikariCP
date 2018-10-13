@@ -30,6 +30,7 @@ import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 import com.zaxxer.hikari.mocks.StubDataSource;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.codahale.metrics.Histogram;
@@ -50,6 +51,7 @@ import com.zaxxer.hikari.util.UtilityElf;
  *
  * @author Brett Wooldridge
  */
+@Ignore
 public class TestMetrics
 {
    @Test
