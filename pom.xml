@@ -42,10 +42,10 @@
    </organization>
 
    <scm>
-      <connection>scm:git:git@github.com:brettwooldridge/HikariCP.git</connection>
-      <developerConnection>scm:git:git@github.com:brettwooldridge/HikariCP.git</developerConnection>
-      <url>git@github.com:brettwooldridge/HikariCP.git</url>
-      <tag>HEAD</tag>
+      <connection>scm:git:git@github.com:leafclick/HikariCP.git</connection>
+      <developerConnection>scm:git:git@github.com:leafclick/HikariCP.git</developerConnection>
+      <url>git@github.com:leafclick/HikariCP.git</url>
+      <tag>3.3.2-graal-RC2</tag>
    </scm>
 
    <licenses>
