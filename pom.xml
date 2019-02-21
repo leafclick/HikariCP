@@ -29,7 +29,7 @@
 
    <groupId>com.zaxxer</groupId>
    <artifactId>HikariCP</artifactId>
-   <version>3.3.2-graal-RC2</version>
+   <version>3.3.2-graal-RC3-SNAPSHOT</version>
    <packaging>bundle</packaging>
 
    <name>HikariCP</name>
@@ -45,7 +45,7 @@
       <connection>scm:git:git@github.com:leafclick/HikariCP.git</connection>
       <developerConnection>scm:git:git@github.com:leafclick/HikariCP.git</developerConnection>
       <url>git@github.com:leafclick/HikariCP.git</url>
-      <tag>3.3.2-graal-RC2</tag>
+      <tag>3.3.2-graal-RC3-SNAPSHOT</tag>
    </scm>
 
    <licenses>
@@ -353,6 +353,10 @@
                   </goals>
                </execution>
             </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
          </plugin>
       </plugins>
 

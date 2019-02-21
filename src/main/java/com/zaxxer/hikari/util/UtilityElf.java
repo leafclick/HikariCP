@@ -98,6 +98,7 @@ public final class UtilityElf
 
       try {
          Class<?> loaded = UtilityElf.class.getClassLoader().loadClass(className);
+
          if (args.length == 0) {
             return clazz.cast(loaded.newInstance());
          }

@@ -30,6 +30,11 @@ public final class CodahaleMetricsTrackerFactory implements MetricsTrackerFactor
       this.registry = registry;
    }
 
+   public CodahaleMetricsTrackerFactory(Object registry)
+   {
+      this((MetricRegistry) registry);
+   }
+
    public MetricRegistry getRegistry()
    {
       return registry;

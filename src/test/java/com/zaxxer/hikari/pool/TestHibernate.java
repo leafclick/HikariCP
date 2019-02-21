@@ -24,12 +24,10 @@ import java.sql.Connection;
 import java.util.Properties;
 
 import org.hibernate.service.UnknownUnwrapTypeException;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zaxxer.hikari.hibernate.HikariConnectionProvider;
 
-@Ignore
 public class TestHibernate
 {
    @Test

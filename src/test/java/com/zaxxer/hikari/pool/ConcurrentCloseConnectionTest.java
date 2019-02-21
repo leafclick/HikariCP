@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -42,7 +41,7 @@ public class ConcurrentCloseConnectionTest
    public void testConcurrentClose() throws Exception
    {
 	  HikariConfig config = newHikariConfig();
-	  config.setDataSource(new StubDataSource());
+      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
 	  try (HikariDataSource ds = new HikariDataSource(config);
 	      final Connection connection = ds.getConnection()) {

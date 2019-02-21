@@ -29,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.CompletableFuture;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class TestConcurrentBag
       config.setMaximumPoolSize(2);
       config.setInitializationFailTimeout(0);
       config.setConnectionTestQuery("VALUES 1");
-      config.setDataSource(new StubDataSource());
+      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
       ds = new HikariDataSource(config);
       pool = getPool(ds);

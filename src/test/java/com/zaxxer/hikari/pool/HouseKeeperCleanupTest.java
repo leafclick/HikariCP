@@ -24,7 +24,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +58,7 @@ public class HouseKeeperCleanupTest
       config.setMaximumPoolSize(10);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
       config.setConnectionTimeout(2500);
-      config.setDataSource(new StubDataSource());
+      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
       config.setScheduledExecutor(executor);
 
       HikariConfig config2 = newHikariConfig();

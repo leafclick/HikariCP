@@ -27,7 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.apache.logging.log4j.Level;
 import org.junit.After;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class ConnectionRaceConditionTest
       config.setMaximumPoolSize(10);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
       config.setConnectionTimeout(5000);
-      config.setDataSource(new StubDataSource());
+      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
       setSlf4jLogLevel(ConcurrentBag.class, Level.INFO);
 

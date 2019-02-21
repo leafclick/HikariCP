@@ -22,14 +22,15 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.metrics.IHealthChecker;
 import com.zaxxer.hikari.pool.HikariPool;
+
+import static com.zaxxer.hikari.util.UtilityElf.safeIsAssignableFrom;
 
 /**
  * Provides Dropwizard HealthChecks.  Two health checks are provided:
@@ -46,17 +47,17 @@ import com.zaxxer.hikari.pool.HikariPool;
  *
  * @author Brett Wooldridge
  */
-public final class CodahaleHealthChecker
+public final class CodahaleHealthChecker implements IHealthChecker
 {
-   /**
-    * Register Dropwizard health checks.
-    *
-    * @param pool the pool to register health checks for
-    * @param hikariConfig the pool configuration
-    * @param registry the HealthCheckRegistry into which checks will be registered
-    */
-   public static void registerHealthChecks(final HikariPool pool, final HikariConfig hikariConfig, final HealthCheckRegistry registry)
+
+   @Override
+   public void registerHealthChecks(final HikariPool pool, final HikariConfig hikariConfig, final Object healthRegistry)
    {
+      if (healthRegistry == null || !safeIsAssignableFrom(healthRegistry, "com.codahale.metrics.health.HealthCheckRegistry")) {
+         throw new IllegalArgumentException("Class must be instance of com.codahale.metrics.health.HealthCheckRegistry");
+      }
+
+      HealthCheckRegistry registry = (HealthCheckRegistry) healthRegistry;
       final Properties healthCheckProperties = hikariConfig.getHealthCheckProperties();
       final MetricRegistry metricRegistry = (MetricRegistry) hikariConfig.getMetricRegistry();
 
@@ -72,11 +73,6 @@ public final class CodahaleHealthChecker
             registry.register(MetricRegistry.name(hikariConfig.getPoolName(), "pool", "Connection99Percent"), new Connection99Percent(timer, expected99thPercentile));
          }
       }
-   }
-
-   private CodahaleHealthChecker()
-   {
-      // private constructor
    }
 
    private static class ConnectivityHealthCheck extends HealthCheck

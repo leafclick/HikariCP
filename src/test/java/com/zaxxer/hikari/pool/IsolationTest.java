@@ -23,7 +23,6 @@ import static org.junit.Assert.assertSame;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -37,7 +36,7 @@ public class IsolationTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setIsolateInternalQueries(true);
-         ds.setDataSource(new StubDataSource());
+         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
          try (Connection connection = ds.getConnection()) {
             connection.close();
@@ -59,7 +58,7 @@ public class IsolationTest
          ds.setMinimumIdle(1);
          ds.setMaximumPoolSize(1);
          ds.setIsolateInternalQueries(false);
-         ds.setDataSource(new StubDataSource());
+         ds.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
          try (Connection connection = ds.getConnection()) {
             connection.close();

@@ -18,6 +18,7 @@ package com.zaxxer.hikari.pool;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariPoolMXBean;
+import com.zaxxer.hikari.metrics.IHealthChecker;
 import com.zaxxer.hikari.metrics.MetricsTrackerFactory;
 import com.zaxxer.hikari.metrics.PoolStats;
 import com.zaxxer.hikari.util.ConcurrentBag;
@@ -51,6 +52,8 @@ import static com.zaxxer.hikari.util.ConcurrentBag.IConcurrentBagEntry.STATE_IN_
 import static com.zaxxer.hikari.util.ConcurrentBag.IConcurrentBagEntry.STATE_NOT_IN_USE;
 import static com.zaxxer.hikari.util.UtilityElf.createThreadPoolExecutor;
 import static com.zaxxer.hikari.util.UtilityElf.quietlySleep;
+import static com.zaxxer.hikari.util.UtilityElf.safeIsAssignableFrom;
+import static com.zaxxer.hikari.util.UtilityElf.createInstance;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -279,8 +282,18 @@ public final class HikariPool extends PoolBase implements HikariPoolMXBean, IBag
     */
    public void setMetricRegistry(Object metricRegistry)
    {
-      logger.warn("setMetricRegistry is not supported in native-image - use setMetricsTrackerFactory directly");
-      setMetricsTrackerFactory((MetricsTrackerFactory) metricRegistry);
+      MetricsTrackerFactory factory = null;
+
+      if (metricRegistry != null && safeIsAssignableFrom(metricRegistry, "com.codahale.metrics.MetricRegistry")) {
+         factory = createInstance("com.zaxxer.hikari.metrics.dropwizard.CodahaleMetricsTrackerFactory", MetricsTrackerFactory.class, metricRegistry);
+      }
+      else if (metricRegistry != null && safeIsAssignableFrom(metricRegistry, "io.micrometer.core.instrument.MeterRegistry")) {
+         factory = createInstance("com.zaxxer.hikari.metrics.micrometer.MicrometerMetricsTrackerFactory", MetricsTrackerFactory.class, metricRegistry);
+      }
+      else if (metricRegistry != null && safeIsAssignableFrom(metricRegistry, "io.prometheus.client.CollectorRegistry")) {
+         factory = createInstance("com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory", MetricsTrackerFactory.class, metricRegistry);
+      }
+      setMetricsTrackerFactory(factory);
    }
 
    /**
@@ -306,7 +319,10 @@ public final class HikariPool extends PoolBase implements HikariPoolMXBean, IBag
     */
    public void setHealthCheckRegistry(Object healthCheckRegistry)
    {
-      logger.warn("setHealthCheckRegistry is not supported in native-image - use CodahaleHealthChecker.registerHealthChecks directly");
+      if (healthCheckRegistry != null) {
+         IHealthChecker healthChecker = createInstance("com.zaxxer.hikari.metrics.dropwizard.CodahaleHealthChecker", IHealthChecker.class);
+         healthChecker.registerHealthChecks(this, config, healthCheckRegistry);
+      }
    }
 
    // ***********************************************************************

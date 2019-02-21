@@ -14,6 +14,11 @@ public class MicrometerMetricsTrackerFactory implements MetricsTrackerFactory {
       this.registry = registry;
    }
 
+   public MicrometerMetricsTrackerFactory(Object registry)
+   {
+      this((MeterRegistry) registry);
+   }
+
    @Override
    public IMetricsTracker create(String poolName, PoolStats poolStats)
    {

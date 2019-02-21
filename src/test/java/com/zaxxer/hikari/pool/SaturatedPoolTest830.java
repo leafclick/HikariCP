@@ -36,7 +36,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.zaxxer.hikari.mocks.StubDataSource;
 import org.apache.logging.log4j.Level;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ public class SaturatedPoolTest830
       config.setMaximumPoolSize(MAX_POOL_SIZE);
       config.setInitializationFailTimeout(Long.MAX_VALUE);
       config.setConnectionTimeout(1000);
-      config.setDataSource(new StubDataSource());
+      config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 
       StubConnection.slowCreate = true;
       StubStatement.setSimulatedQueryTime(1000);
