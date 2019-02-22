@@ -18,7 +18,6 @@ package com.zaxxer.hikari;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.zaxxer.hikari.metrics.MetricsTrackerFactory;
-import com.zaxxer.hikari.util.PropertyElf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,17 +28,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.AccessControlException;
 import java.sql.Connection;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.zaxxer.hikari.util.PropertyElf.extractDataSourceProperties;
 import static com.zaxxer.hikari.util.UtilityElf.getNullIfEmpty;
 import static com.zaxxer.hikari.util.UtilityElf.safeIsAssignableFrom;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -100,6 +100,101 @@ public class HikariConfig implements HikariConfigMXBean
 
    private volatile boolean sealed;
 
+   static final Set<String> HIKARI_PROP_SET = new HashSet<>(Arrays.asList(
+      "catalog",
+      "connectionTimeout",
+      "validationTimeout",
+      "idleTimeout",
+      "leakDetectionThreshold",
+      "maxLifetime",
+      "maximumPoolSize",
+      "minimumIdle",
+      "username",
+      "password",
+
+      "initializationFailTimeout",
+      "connectionInitSql",
+      "connectionTestQuery",
+      "dataSourceClassName",
+      "dataSourceJNDI",
+      "driverClassName",
+      "jdbcUrl",
+      "poolName",
+      "schema",
+      "transactionIsolation",
+      "autoCommit",
+      "readOnly",
+      "isolateInternalQueries",
+      "registerMbeans",
+      "allowPoolSuspension",
+      "dataSource",
+      "dataSourceProperties",
+      "threadFactory",
+      "scheduledExecutor",
+      "metricsTrackerFactory",
+      "metricRegistry",
+      "healthCheckRegistry",
+      "healthCheckProperties"
+   ));
+
+   private void checkForUnknownProperties(Properties properties)
+   {
+      Set<String> keys = properties.stringPropertyNames();
+      Set<String> unknownKeys = new HashSet<>();
+
+      for (String key : keys) {
+         if (!HIKARI_PROP_SET.contains(key) && !key.startsWith("dataSource.")) {
+            LOGGER.error("Unknown HikariConfig property {}", key);
+            unknownKeys.add(key);
+         }
+      }
+
+      if (!unknownKeys.isEmpty()) {
+         throw new RuntimeException(String.format("Unknown HikariConfig properties [%s]", String.join(", ", unknownKeys)));
+      }
+   }
+
+   private void loadProperties(Properties properties)
+   {
+      if (properties.containsKey("catalog")) setCatalog(properties.getProperty("catalog"));
+      if (properties.containsKey("connectionTimeout")) setConnectionTimeout(Long.parseLong(properties.getProperty("connectionTimeout")));
+      if (properties.containsKey("validationTimeout")) setValidationTimeout(Long.parseLong(properties.getProperty("validationTimeout")));
+      if (properties.containsKey("idleTimeout")) setIdleTimeout(Long.parseLong(properties.getProperty("idleTimeout")));
+      if (properties.containsKey("leakDetectionThreshold")) setLeakDetectionThreshold(Long.parseLong(properties.getProperty("leakDetectionThreshold")));
+      if (properties.containsKey("maxLifetime")) setMaxLifetime(Long.parseLong(properties.getProperty("maxLifetime")));
+      if (properties.containsKey("maximumPoolSize")) setMaximumPoolSize(Integer.parseInt(properties.getProperty("maximumPoolSize")));
+      if (properties.containsKey("minimumIdle")) setMinimumIdle(Integer.parseInt(properties.getProperty("minimumIdle")));
+      if (properties.containsKey("username")) setUsername(properties.getProperty("username"));
+      if (properties.containsKey("password")) setPassword(properties.getProperty("password"));
+
+      if (properties.containsKey("initializationFailTimeout")) setInitializationFailTimeout(Long.parseLong(properties.getProperty("initializationFailTimeout")));
+      if (properties.containsKey("connectionInitSql")) setConnectionInitSql(properties.getProperty("connectionInitSql"));
+      if (properties.containsKey("connectionTestQuery")) setConnectionTestQuery(properties.getProperty("connectionTestQuery"));
+      if (properties.containsKey("dataSourceClassName")) setDataSourceClassName(properties.getProperty("dataSourceClassName"));
+      if (properties.containsKey("dataSourceJNDI")) setDataSourceJNDI(properties.getProperty("dataSourceJNDI"));
+      if (properties.containsKey("driverClassName")) setDriverClassName(properties.getProperty("driverClassName"));
+      if (properties.containsKey("jdbcUrl")) setJdbcUrl(properties.getProperty("jdbcUrl"));
+      if (properties.containsKey("poolName")) setPoolName(properties.getProperty("poolName"));
+      if (properties.containsKey("schema")) setSchema(properties.getProperty("schema"));
+      if (properties.containsKey("transactionIsolation")) setTransactionIsolation(properties.getProperty("transactionIsolation"));
+      if (properties.containsKey("autoCommit")) setAutoCommit(Boolean.parseBoolean(properties.getProperty("autoCommit")));
+      if (properties.containsKey("readOnly")) setReadOnly(Boolean.parseBoolean(properties.getProperty("readOnly")));
+      if (properties.containsKey("isolateInternalQueries")) setIsolateInternalQueries(Boolean.parseBoolean(properties.getProperty("isolateInternalQueries")));
+      if (properties.containsKey("registerMbeans")) setRegisterMbeans(Boolean.parseBoolean(properties.getProperty("registerMbeans")));
+      if (properties.containsKey("allowPoolSuspension")) setAllowPoolSuspension(Boolean.parseBoolean(properties.getProperty("allowPoolSuspension")));
+
+      if (properties.containsKey("dataSource")) setDataSource((DataSource) properties.get("dataSource"));
+      if (properties.containsKey("threadFactory")) setThreadFactory((ThreadFactory) properties.get("threadFactory"));
+      if (properties.containsKey("scheduledExecutor")) setScheduledExecutor((ScheduledExecutorService) properties.get("scheduledExecutor"));
+      if (properties.containsKey("metricsTrackerFactory")) setMetricsTrackerFactory((MetricsTrackerFactory) properties.get("metricsTrackerFactory"));
+      if (properties.containsKey("metricRegistry")) setMetricRegistry(properties.get("metricRegistry"));
+      if (properties.containsKey("healthCheckRegistry")) setHealthCheckRegistry(properties.get("healthCheckRegistry"));
+
+      checkForUnknownProperties(properties);
+
+      addDataSourceProperties(extractDataSourceProperties(properties));
+   }
+
    /**
     * Default constructor
     */
@@ -131,7 +226,7 @@ public class HikariConfig implements HikariConfigMXBean
    public HikariConfig(Properties properties)
    {
       this();
-      PropertyElf.setTargetFromProperties(this, properties);
+      loadProperties(properties);
    }
 
    /**
@@ -438,6 +533,24 @@ public class HikariConfig implements HikariConfigMXBean
    {
       checkIfSealed();
       dataSourceProperties.put(propertyName, value);
+   }
+
+   /**
+    * Add all properties (name/value pairs) that will be used to configure the {@link DataSource}/{@link java.sql.Driver}.
+    *
+    * In the case of a {@link DataSource}, the property names will be translated to Java setters following the Java Bean
+    * naming convention.  For example, the property {@code cachePrepStmts} will translate into {@code setCachePrepStmts()}
+    * with the {@code value} passed as a parameter.
+    *
+    * In the case of a {@link java.sql.Driver}, the property will be added to a {@link Properties} instance that will
+    * be passed to the driver during {@link java.sql.Driver#connect(String, Properties)} calls.
+    *
+    * @param properties the map of propertyName, value pairs describing each property
+    */
+   public void addDataSourceProperties(Properties properties)
+   {
+      checkIfSealed();
+      dataSourceProperties.putAll(properties);
    }
 
    public String getDataSourceJNDI()
@@ -873,17 +986,39 @@ public class HikariConfig implements HikariConfigMXBean
     */
    public void copyStateTo(HikariConfig other)
    {
-      for (Field field : HikariConfig.class.getDeclaredFields()) {
-         if (!Modifier.isFinal(field.getModifiers())) {
-            field.setAccessible(true);
-            try {
-               field.set(other, field.get(this));
-            }
-            catch (Exception e) {
-               throw new RuntimeException("Failed to copy HikariConfig state: " + e.getMessage(), e);
-            }
-         }
-      }
+      other.catalog = this.getCatalog();
+      other.connectionTimeout = this.getConnectionTimeout();
+      other.validationTimeout = this.getValidationTimeout();
+      other.idleTimeout = this.getIdleTimeout();
+      other.leakDetectionThreshold = this.getLeakDetectionThreshold();
+      other.maxLifetime = this.getMaxLifetime();
+      other.maxPoolSize = this.getMaximumPoolSize();
+      other.minIdle = this.getMinimumIdle();
+      other.username = this.getUsername();
+      other.password = this.getPassword();
+      other.connectionInitSql = this.getConnectionInitSql();
+      other.connectionTestQuery = this.getConnectionTestQuery();
+      other.dataSourceClassName = this.getDataSourceClassName();
+      other.dataSourceJndiName = this.getDataSourceJNDI();
+      other.driverClassName = this.getDriverClassName();
+      other.jdbcUrl = this.getJdbcUrl();
+      other.poolName = this.getPoolName();
+      other.schema = this.getSchema();
+      other.transactionIsolationName = this.getTransactionIsolation();
+      other.isAutoCommit = this.isAutoCommit();
+      other.isReadOnly = this.isReadOnly();
+      other.isIsolateInternalQueries = this.isIsolateInternalQueries();
+      other.isRegisterMbeans = this.isRegisterMbeans();
+      other.isAllowPoolSuspension = this.isAllowPoolSuspension();
+      other.threadFactory = this.getThreadFactory();
+      other.scheduledExecutor = this.getScheduledExecutor();
+      other.metricsTrackerFactory = this.getMetricsTrackerFactory();
+      other.metricRegistry = this.getMetricRegistry();
+      other.healthCheckRegistry = this.getHealthCheckRegistry();
+      other.healthCheckProperties = this.getHealthCheckProperties();
+
+      other.dataSource = this.getDataSource();
+      other.dataSourceProperties.putAll(this.getDataSourceProperties());
 
       other.sealed = false;
    }
@@ -1015,45 +1150,77 @@ public class HikariConfig implements HikariConfigMXBean
       if (sealed) throw new IllegalStateException("The configuration of the pool is sealed once started. Use HikariConfigMXBean for runtime changes.");
    }
 
-   private void logConfiguration()
-   {
-      LOGGER.debug("{} - configuration:", poolName);
-      final Set<String> propertyNames = new TreeSet<>(PropertyElf.getPropertyNames(HikariConfig.class));
-      for (String prop : propertyNames) {
-         try {
-            Object value = PropertyElf.getProperty(prop, this);
-            if ("dataSourceProperties".equals(prop)) {
-               Properties dsProps = PropertyElf.copyProperties(dataSourceProperties);
-               dsProps.setProperty("password", "<masked>");
-               value = dsProps;
-            }
+   private void logConfiguration(String prop, Object value) {
+      try {
+         if ("initializationFailTimeout".equals(prop) && initializationFailTimeout == Long.MAX_VALUE) {
+            value = "infinite";
+         }
+         else if ("transactionIsolation".equals(prop) && transactionIsolationName == null) {
+            value = "default";
+         }
+         else if (prop.matches("scheduledExecutorService|threadFactory") && value == null) {
+            value = "internal";
+         }
+         else if (prop.contains("jdbcUrl") && value instanceof String) {
+            value = ((String)value).replaceAll("([?&;]password=)[^&#;]*(.*)", "$1<masked>$2");
+         }
+         else if (prop.contains("password")) {
+            value = "<masked>";
+         }
+         else if (value instanceof String) {
+            value = "\"" + value + "\""; // quote to see lead/trailing spaces is any
+         }
+         else if (value == null) {
+            value = "none";
+         }
+         LOGGER.debug((prop + "................................................").substring(0, 32) + value);
+      }
+      catch (Exception e) {
+         // continue
+      }
+   }
 
-            if ("initializationFailTimeout".equals(prop) && initializationFailTimeout == Long.MAX_VALUE) {
-               value = "infinite";
-            }
-            else if ("transactionIsolation".equals(prop) && transactionIsolationName == null) {
-               value = "default";
-            }
-            else if (prop.matches("scheduledExecutorService|threadFactory") && value == null) {
-               value = "internal";
-            }
-            else if (prop.contains("jdbcUrl") && value instanceof String) {
-               value = ((String)value).replaceAll("([?&;]password=)[^&#;]*(.*)", "$1<masked>$2");
-            }
-            else if (prop.contains("password")) {
-               value = "<masked>";
-            }
-            else if (value instanceof String) {
-               value = "\"" + value + "\""; // quote to see lead/trailing spaces is any
-            }
-            else if (value == null) {
-               value = "none";
-            }
-            LOGGER.debug((prop + "................................................").substring(0, 32) + value);
-         }
-         catch (Exception e) {
-            // continue
-         }
+   @SuppressWarnings("StatementWithEmptyBody")
+   private void logConfiguration() {
+      LOGGER.debug("{} - configuration:", poolName);
+
+      try {
+         logConfiguration("catalog", getCatalog());
+         logConfiguration("connectionTimeout", getConnectionTimeout());
+         logConfiguration("validationTimeout", getValidationTimeout());
+         logConfiguration("idleTimeout", getIdleTimeout());
+         logConfiguration("leakDetectionThreshold", getLeakDetectionThreshold());
+         logConfiguration("maxLifetime", getMaxLifetime());
+         logConfiguration("maximumPoolSize", getMaximumPoolSize());
+         logConfiguration("minimumIdle", getMinimumIdle());
+         logConfiguration("username", getUsername());
+         logConfiguration("password", getPassword());
+         logConfiguration("initializationFailTimeout", getInitializationFailTimeout());
+         logConfiguration("connectionInitSql", getConnectionInitSql());
+         logConfiguration("connectionTestQuery", getConnectionTestQuery());
+         logConfiguration("dataSourceClassName", getDataSourceClassName());
+         logConfiguration("dataSourceJNDI", getDataSourceJNDI());
+         logConfiguration("driverClassName", getDriverClassName());
+         logConfiguration("jdbcUrl", getJdbcUrl());
+         logConfiguration("poolName", getPoolName());
+         logConfiguration("schema", getSchema());
+         logConfiguration("transactionIsolation", getTransactionIsolation());
+         logConfiguration("autoCommit", isAutoCommit());
+         logConfiguration("readOnly", isReadOnly());
+         logConfiguration("isolateInternalQueries", isIsolateInternalQueries());
+         logConfiguration("registerMbeans", isRegisterMbeans());
+         logConfiguration("allowPoolSuspension", isAllowPoolSuspension());
+         logConfiguration("datasource", getDataSource());
+         logConfiguration("threadFactory", getThreadFactory());
+         logConfiguration("scheduledExecutor", getScheduledExecutor());
+         logConfiguration("metricsTrackerFactory", getMetricsTrackerFactory());
+         logConfiguration("metricRegistry", getMetricRegistry());
+         logConfiguration("healthCheckRegistry", getHealthCheckRegistry());
+
+         dataSourceProperties.forEach((key, value) -> logConfiguration(key.toString(), value));
+      } catch (Exception e) {
+         LOGGER.debug("{} - can't print configuration: {}", poolName, e.getMessage());
+         // continue
       }
    }
 
@@ -1064,7 +1231,7 @@ public class HikariConfig implements HikariConfigMXBean
          if (is != null) {
             Properties props = new Properties();
             props.load(is);
-            PropertyElf.setTargetFromProperties(this, props);
+            loadProperties(props);
          }
          else {
             throw new IllegalArgumentException("Cannot find property file: " + propertyFileName);

@@ -18,9 +18,11 @@ package com.zaxxer.hikari.util;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -28,8 +30,6 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.zaxxer.hikari.HikariConfig;
 
 /**
  * A class that reflectively sets bean properties on a target object.
@@ -44,6 +44,18 @@ public final class PropertyElf
       // cannot be constructed
    }
 
+   public static Properties extractDataSourceProperties(Properties properties)
+   {
+      Properties dsProperties = new Properties();
+      properties.forEach((key, value) -> {
+         if (key.toString().startsWith("dataSource.")) {
+            dsProperties.put(key.toString().substring("dataSource.".length()), value);
+         }
+      });
+
+      return dsProperties;
+   }
+
    public static void setTargetFromProperties(final Object target, final Properties properties)
    {
       if (target == null || properties == null) {
@@ -52,12 +64,7 @@ public final class PropertyElf
 
       List<Method> methods = Arrays.asList(target.getClass().getMethods());
       properties.forEach((key, value) -> {
-         if (target instanceof HikariConfig && key.toString().startsWith("dataSource.")) {
-            ((HikariConfig) target).addDataSourceProperty(key.toString().substring("dataSource.".length()), value);
-         }
-         else {
-            setProperty(target, key.toString(), value, methods);
-         }
+         setProperty(target, key.toString(), value, methods);
       });
    }
 
