@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.util.PropertyElf;
 
 public class TestPropertySetter
@@ -97,15 +98,32 @@ public class TestPropertySetter
    }
 
    @Test
-   public void testSetNonExistantPropertyName() throws Exception
+   public void testSetNonExistentPropertyName() throws Exception
    {
       try {
          Properties props = new Properties();
          props.put("what", "happened");
-         PropertyElf.setTargetFromProperties(new HikariConfig(), props);
+         PropertyElf.setTargetFromProperties(new HikariDataSource(), props);
          fail();
       }
       catch (RuntimeException e) {
+         assertTrue(e.getMessage().contains("what"));
+      }
+   }
+
+   @Test
+   public void testSetNonExistentConfigPropertyName() throws Exception
+   {
+      try {
+         Properties props = new Properties();
+         props.put("no one", "knows");
+         props.put("what", "happened");
+         new HikariConfig(props);
+         fail();
+      }
+      catch (RuntimeException e) {
+         assertTrue(e.getMessage().contains("what"));
+         assertTrue(e.getMessage().contains("no one"));
       }
    }
 }

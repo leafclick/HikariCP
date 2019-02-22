@@ -19,7 +19,6 @@ package com.zaxxer.hikari;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -29,8 +28,6 @@ import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 import javax.sql.DataSource;
-
-import com.zaxxer.hikari.util.PropertyElf;
 
 /**
  * A JNDI factory that produces HikariDataSource instances.
@@ -45,14 +42,13 @@ public class HikariJNDIFactory implements ObjectFactory
       // We only know how to deal with <code>javax.naming.Reference</code> that specify a class name of "javax.sql.DataSource"
       if (obj instanceof Reference && "javax.sql.DataSource".equals(((Reference) obj).getClassName())) {
          Reference ref = (Reference) obj;
-         Set<String> hikariPropSet = PropertyElf.getPropertyNames(HikariConfig.class);
 
          Properties properties = new Properties();
          Enumeration<RefAddr> enumeration = ref.getAll();
          while (enumeration.hasMoreElements()) {
             RefAddr element = enumeration.nextElement();
             String type = element.getType();
-            if (type.startsWith("dataSource.") || hikariPropSet.contains(type)) {
+            if (type.startsWith("dataSource.") || HikariConfig.HIKARI_PROP_SET.contains(type)) {
                properties.setProperty(type, element.getContent().toString());
             }
          }
